@@ -1,6 +1,5 @@
 class Station 
 
-  attr_accessor :color
   attr_reader :name, :trains
 
   # имеет название, которое указывается при создании
@@ -17,18 +16,18 @@ class Station
 
   # может возвращать список поездов на станции
   # по типу: кол-во грузовых, пассажирских
-  def type
-    puts @type
+   def types(type)
+    self.trains.each { |train| if train.type == type puts train end }
   end
 
   # может принимать поезда
   def add_train(train)
-  @trains << train
+    self.trains << train
   end
 
   # может отправлять поезда
   def del_train(train)
-  @trains.delete(train)
+    @trains.delete(train)
   end  
 
 end  
