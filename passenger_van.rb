@@ -1,2 +1,2 @@
-# TODO
-# добавить позже
+class PassengerVan < Van
+end
