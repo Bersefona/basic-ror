@@ -87,9 +87,7 @@ class Train
   end
   
   def station(value)
-    if (self.route.is_a?(Route) && value >= 0 && value <= self.route.stations.length - 1)
-      self.route.stations[value] 
-    end
+    self.route.stations[value] 
   end
 
 end  
