@@ -1,0 +1,2 @@
+class CargoVan < Van
+end
