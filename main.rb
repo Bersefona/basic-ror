@@ -48,8 +48,8 @@ class Menu
       when 6 then add_route_to_train
       when 7 then add_van
       when 8 then delete_van
-      when 9 then move_train_forward
-      when 10 then move_train_backward
+      when 9 then move_forward
+      when 10 then move_backward
       when 11 then show_trains_on_station
       when 12 then show_stations
       when 0 then quit
@@ -176,7 +176,7 @@ class Menu
     self.trains[train_index].delete_van
   end
 
-  def move_train_forward
+  def move_forward
     return if self.trains.empty? || self.routes.empty?
 
     train_index = get_train_index
@@ -185,10 +185,10 @@ class Menu
 
     return if self.trains[train_index].route.nil?
 
-    self.trains[train_index].move_forward
+    self.trains[train_index].move_on
   end
 
-  def move_train_backward
+  def move_backward
     return if self.trains.empty? || self.routes.empty?
 
     train_index = get_train_index
@@ -197,7 +197,7 @@ class Menu
 
     return if self.trains[train_index].route.nil?
 
-    self.trains[train_index].move_backward
+    self.trains[train_index].move_back
   end
 
   def show_stations
