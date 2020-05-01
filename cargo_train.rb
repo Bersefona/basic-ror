@@ -1,3 +1,5 @@
+require_relative 'train.rb'
+
 class CargoTrain < Train
 
   def add_van(van)
