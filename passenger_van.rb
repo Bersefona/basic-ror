@@ -2,7 +2,7 @@ require_relative 'van.rb'
 
 class PassengerVan < Van
   
-  def initialize(name, type = 'passenger')
+  def initialize(number, type = 'passenger')
     super
   end
   
