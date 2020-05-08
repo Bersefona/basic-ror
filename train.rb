@@ -37,7 +37,7 @@ class Train
   end
   
   def delete_van
-    @vans.pop if @speed == 0 && @vans.lenght > 0
+    @vans.delete(van) if @speed == 0 && @vans.lenght > 0
   end
   
   def route=(route)
