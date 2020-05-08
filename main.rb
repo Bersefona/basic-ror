@@ -16,26 +16,27 @@
 #
 ###
 
+require_relative 'cargo_train.rb'
+require_relative 'cargo_van.rb'
+require_relative 'passenger_train.rb'
+require_relative 'passenger_van.rb'
 require_relative 'station.rb'
 require_relative 'route.rb'
 require_relative 'train.rb'
-require_relative 'passenger_train.rb'
-require_relative 'passenger_van.rb'
-require_relative 'cargo_train.rb'
-require_relative 'cargo_van.rb'
 require_relative 'van.rb'
 
 class Menu
 
-  attr_reader :stations, :routes, :trains
+  attr_reader :stations, :routes, :trains, :vans
   
   def initialize
     @stations = []
     @routes = []
     @trains = []
+    @vans = []
   end
-   
- def show_menu
+
+  def show_menu
   loop do 
       context_menu
       choice = gets.chomp.to_i
@@ -48,8 +49,8 @@ class Menu
       when 6 then add_route_to_train
       when 7 then add_van
       when 8 then delete_van
-      when 9 then move_forward
-      when 10 then move_backward
+      when 9 then move_train_forward
+      when 10 then move_train_backward
       when 11 then show_trains_on_station
       when 12 then show_stations
       when 0 then quit
@@ -60,8 +61,9 @@ class Menu
     end
         
   end
-        
-  def context_menu
+      
+   
+ def context_menu
     puts "Что вы хотите сделать?"
     puts '1. Создать станцию.'
     puts '2. Создать поезд.'
@@ -83,24 +85,29 @@ class Menu
     @stations << Station.new(station_name) unless station_name.empty?
   end
 
-  def create_train
-    Train::TYPES.each_with_index do |train_type, index|
-      puts "[#{index}] #{train_type[:name]}"
+   def create_train
+    puts 'Введите 1 для создания пассажиского поезда и 2 - для грузового.'
+    choice = gets.chomp.to_i
+      case choice
+      when 1 then create_passenger_train
+      when 2 then create_cargo_train
+      else
+        return 'Некорректный выбор. Повторите ввод.'
+      end
     end
 
-    type_index = get_type_index
-    return if type_index.nil? || Train::TYPES[type_index].nil?
-
+  def create_passenger_train
     number = get_train_number
     return if number.empty?
+    train = PassengerTrain.new(number)
+    self.trains << train
+  end
 
-    case Train::TYPES[type_index][:type]
-      when 'CargoTrain' then train = CargoTrain.new(number)
-      when 'PassengerTrain' then train = PassengerTrain.new(number)
-      else return 
-    end
-    
-    @trains << train
+  def create_cargo_train
+    number = get_train_number
+    return if number.empty?
+    train = CargoTrain.new(number)
+    self.trains << train
   end
 
   def create_route
@@ -119,7 +126,6 @@ class Menu
   def add_station_to_route
     return if self.routes.empty?
 
-    self.show_stations
     station_index = get_station_index
     return if station_index.nil? || self.stations[station_index].nil?
 
@@ -176,7 +182,7 @@ class Menu
     self.trains[train_index].delete_van
   end
 
-  def move_forward
+  def move_train_forward
     return if self.trains.empty? || self.routes.empty?
 
     train_index = get_train_index
@@ -185,10 +191,10 @@ class Menu
 
     return if self.trains[train_index].route.nil?
 
-    self.trains[train_index].move_on
+    self.trains[train_index].move_forward
   end
 
-  def move_backward
+  def move_train_backward
     return if self.trains.empty? || self.routes.empty?
 
     train_index = get_train_index
@@ -197,29 +203,30 @@ class Menu
 
     return if self.trains[train_index].route.nil?
 
-    self.trains[train_index].move_back
+    self.trains[train_index].move_backward
   end
 
   def show_stations
-   self.stations.each_with_index { |station, index| puts "[#{index}] #{station.name}" }
-   puts '---'
-  end
-      
-  def show_trains_on_station
-    return if self.trains.empty? || self.stations.empty?
-
-   self.show_stations
-   station_index = get_station_index
-
-   return if station_index.nil? || self.stations[station_index].nil?
-
-   trains = [] 
-   self.stations[station_index].trains.each { |number, train| trains << train }
-   show_trains(trains)
-
+    self.stations.each_with_index { |station, index| puts "[#{index}] #{station.name}" }
     puts '---'
   end
 
+
+  def show_trains_on_station
+    return if self.trains.empty? || self.stations.empty?
+
+    self.show_stations
+    station_index = get_station_index
+
+    return if station_index.nil? || self.stations[station_index].nil?
+
+    trains = [] 
+    self.stations[station_index].trains.each { |number, train| trains << train }
+    show_trains(trains)
+
+    puts '---'
+  end
+  
 
   private
 
@@ -250,7 +257,7 @@ class Menu
 
   def get_train_number
     print "Введите номер поезда: "
-    get.chomp.lstrip.rstrip
+    gets.chomp.lstrip.rstrip
   end
 
   def get_train_index
@@ -270,19 +277,19 @@ class Menu
 
   def show_trains(trains)
     trains.each_with_index do |train, index|
-      train_type = train.class.to_s
-      type = Train::TYPES.select { |train| train[:type] == train_type }
-      show_info = [
+      showing_info = [
         "[#{index}] Поезд №#{train.number}",
-        "Тип поезда: #{type[0][:name]}",
+        "Тип: #{train.type}",
+        "Вагонов: #{train.vans.length} шт."
       ]
-      show_info << "В данный момент поезд находится на станции #{train.current_station.name}" unless train.route.nil?
-      puts show_info.join(" | ")
+      showing_info << "Текущая станция: #{train.current_station.name}" unless train.route.nil?
+      puts showing_info.join(" | ")
     end
   end
 
   def quit 
     exit!
   end
-
 end
+
+Menu.new.show_menu
