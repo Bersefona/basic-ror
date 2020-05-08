@@ -217,7 +217,7 @@ class Menu
 
     self.show_stations
     station_index = get_station_index
-
+    
     return if station_index.nil? || self.stations[station_index].nil?
 
     trains = [] 
@@ -229,11 +229,6 @@ class Menu
   
 
   private
-
-  def get_train_type_index
-    print "Введите индекс типа поезда: "
-    get_integer
-  end
 
   def get_start_index
     print "Введите индекс начальной станции: "
