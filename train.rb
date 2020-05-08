@@ -36,7 +36,7 @@ class Train
     @vans << van if @speed == 0
   end
   
-  def delete_van
+  def delete_van(van)
     @vans.delete(van) if @speed == 0 && @vans.lenght > 0
   end
   
