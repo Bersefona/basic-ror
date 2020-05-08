@@ -2,7 +2,7 @@ require_relative 'van.rb'
 
 class CargoVan < Van
   
-  def initialize(name, type = 'cargo')
+  def initialize(number, type = 'cargo')
     super
   end
 
