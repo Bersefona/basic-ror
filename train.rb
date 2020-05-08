@@ -4,27 +4,16 @@
 #   Сделать родителя для классов, который будет содержать общие методы и свойства
 #   Разделить вагоны на класс "грузовые" и класс "пассажирские"
 #   К пассажирскому поезду можно прицепить только пассажирские, к грузовому - грузовые.
-#   (Не забыть пояснить за protected!!!)
 #
 ###
 
 class Train
 
-   TYPES = [
-    {
-      type: 'PassengerTrain',
-      name: 'пассажирский'
-    },
-    {
-      type: 'CargoTrain',
-      name: 'грузовой'
-    }
-  ]
-  
-  attr_reader :speed, :route, :number, :current_station_index
+  attr_reader :speed, :route, :number, :current_station_index, :type
 
-  def initialize(number)
+  def initialize(number, type)
     @number = number
+    @type = type
     @speed = 0
     @vans = []
     @route = nil
