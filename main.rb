@@ -126,9 +126,11 @@ class Menu
   def add_station_to_route
     return if self.routes.empty?
 
+    self.show_stations
     station_index = get_station_index
     return if station_index.nil? || self.stations[station_index].nil?
 
+    self.show_routes
     route_index = get_route_index
     return if route_index.nil? || self.routes[route_index].nil?
 
@@ -138,6 +140,7 @@ class Menu
   def delete_station_from_route
     return if self.routes.empty?
 
+    self.show_routes
     route_index = get_route_index
     return if route_index.nil? || self.routes[route_index].nil?
 
@@ -147,9 +150,11 @@ class Menu
   def add_route_to_train
     return if self.trains.empty? || self.routes.empty?
 
+    self.show_routes
     route_index = get_route_index
     return if route_index.nil? || self.routes[route_index].nil?
 
+    self.show_all_trains
     train_index = get_train_index
     return if train_index.nil? || self.trains[train_index].nil?
     
@@ -159,13 +164,16 @@ class Menu
   def add_van
     return if self.trains.empty?
 
+    self.show_all_trains
     train_index = get_train_index
 
     return if self.trains[train_index].nil?
 
-    case self.trains[train_index].class.to_s
-      when 'CargoTrain' then van = CargoVan.new
-      when 'PassengerTrain' then van = PassengerVan.new
+    print 'Введите 1 для создания вагона грузового типа и 2 - пасажжирского: '
+    choice = gets.chomp.to_i
+    case choice
+      when 1 then van = CargoVan.new
+      when 2 then van = PassengerVan.new
       else return
     end
 
@@ -174,7 +182,8 @@ class Menu
 
   def delete_van
     return if self.trains.empty?
-
+    
+    self.show_all_trains
     train_index = get_train_index
   
     return if train_index.nil? || self.trains[train_index].nil?
@@ -185,25 +194,27 @@ class Menu
   def move_train_forward
     return if self.trains.empty? || self.routes.empty?
 
+    self.show_all_trains
     train_index = get_train_index
    
     return if train_index.nil? || self.trains[train_index].nil?
 
     return if self.trains[train_index].route.nil?
 
-    self.trains[train_index].move_forward
+    self.trains[train_index].move_on
   end
 
   def move_train_backward
     return if self.trains.empty? || self.routes.empty?
 
+    self.show_all_trains
     train_index = get_train_index
     
     return if train_index.nil? || self.trains[train_index].nil?
 
     return if self.trains[train_index].route.nil?
 
-    self.trains[train_index].move_backward
+    self.trains[train_index].move_back
   end
 
   def show_stations
@@ -226,6 +237,21 @@ class Menu
 
     puts '---'
   end
+      
+  def show_routes
+    self.routes.each_with_index do |route, index|
+      stations = []
+      route.stations.each { |station| stations << station.name }
+      puts "[#{index}] #{stations.join(" -> ")}"
+    end
+    puts '---'
+  end
+   
+  def show_all_trains
+    show_trains(self.trains)
+    puts '---'
+  end
+      
   
 
   private
@@ -274,8 +300,7 @@ class Menu
     trains.each_with_index do |train, index|
       showing_info = [
         "[#{index}] Поезд №#{train.number}",
-        "Тип: #{train.type}",
-        "Вагонов: #{train.vans.length} шт."
+        "Тип: #{train.type}"
       ]
       showing_info << "Текущая станция: #{train.current_station.name}" unless train.route.nil?
       puts showing_info.join(" | ")
