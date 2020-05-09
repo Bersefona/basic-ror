@@ -27,7 +27,7 @@ require_relative 'van.rb'
 
 class Menu
 
-  attr_reader :stations, :routes, :trains, :vans
+  attr_accessor :stations, :routes, :trains, :vans
   
   def initialize
     @stations = []
@@ -48,7 +48,7 @@ class Menu
       when 5 then delete_station_from_route
       when 6 then add_route_to_train
       when 7 then add_van
-      when 8 then delete_van
+      when 8 then delete_van_from_train
       when 9 then move_train_forward
       when 10 then move_train_backward
       when 11 then show_trains_on_station
@@ -86,7 +86,7 @@ class Menu
   end
 
    def create_train
-    puts 'Введите 1 для создания пассажиского поезда и 2 - для грузового.'
+    puts 'Введите 1 для создания пассажирского поезда и 2 - для грузового.'
     choice = gets.chomp.to_i
       case choice
       when 1 then create_passenger_train
@@ -169,18 +169,16 @@ class Menu
 
     return if self.trains[train_index].nil?
 
-    print 'Введите 1 для создания вагона грузового типа и 2 - пасажжирского: '
-    choice = gets.chomp.to_i
-    case choice
-      when 1 then van = CargoVan.new
-      when 2 then van = PassengerVan.new
+    case self.trains[train_index].class.to_s
+      when 'CargoTrain' then van = CargoVan.new
+      when 'PassengerTrain' then van = PassengerVan.new
       else return
     end
 
     self.trains[train_index].add_van(van)
   end
 
-  def delete_van
+  def delete_van_from_train
     return if self.trains.empty?
     
     self.show_all_trains
@@ -232,7 +230,7 @@ class Menu
     return if station_index.nil? || self.stations[station_index].nil?
 
     trains = [] 
-    self.stations[station_index].trains.each { |number, train| trains << train }
+    self.stations[station_index].trains.each { |train| trains << train }
     show_trains(trains)
 
     puts '---'
@@ -313,3 +311,4 @@ class Menu
 end
 
 Menu.new.show_menu
+
