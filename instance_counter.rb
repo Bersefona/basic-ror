@@ -16,7 +16,7 @@ module InstanceCounter
   end
 
 module ClassMethods
-    attr_accessor :instances
+  attr_accessor :instances
 end
 
 module InstanceMethods
