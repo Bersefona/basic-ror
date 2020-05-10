@@ -24,8 +24,8 @@ class Route
     @stations.insert(-2, station) if station.is_a?(Station)
   end
   
-  def delete_station(station)
-    @stations.delete(station) if station != @stations[0] && station != @stations[-1]
+  def delete_station
+    @stations.delete_at(-2) if self.stations.length > 2
   end
   
   def show_stations
