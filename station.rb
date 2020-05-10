@@ -1,10 +1,12 @@
 ###
 #  В классе Station (жд станция) создать метод класса all,
 #  который возвращает все станции (объекты), созданные на данный момент
+# Подключить модуль InstanceCounter в класс станции.
 ###
+require_relative 'instance_counter.rb'
 
 class Station 
-
+  include InstanceCounter
   attr_reader :name, :trains
   
   @@stations = []
