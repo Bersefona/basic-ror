@@ -1,4 +1,4 @@
-# Подключить модуль к классам Вагон
+# Подключить модуль к классу Вагон
 require_relative 'manufacturer.rb'
 
 class Van
