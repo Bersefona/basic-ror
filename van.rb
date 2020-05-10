@@ -1,5 +1,8 @@
+# Подключить модуль к классам Вагон
+require_relative 'manufacturer.rb'
+
 class Van
-  
+  include Manufacturer
   attr_reader :number
 
   def initialize
