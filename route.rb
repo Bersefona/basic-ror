@@ -12,13 +12,11 @@ class Route
   def add_station(station)
     raise "В маршрут уже входит станция '#{station.name}'." if stations.include?(station)
     raise "Станция должна быть объектом типа Station." unless station.is_a?(Station)
-
     @stations.insert(-2, station)
   end
   
   def delete_station
     raise "Отсутствуют промежуточные станции в маршруте." unless self.stations.length > 2
-
     @stations.delete_at(-2) 
   end
   
