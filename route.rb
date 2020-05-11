@@ -1,36 +1,42 @@
 require_relative 'instance_counter.rb'
 
-class Route
+class Station 
   include InstanceCounter
-  attr_reader :stations
+  attr_reader :name, :trains
+  NAME_FORMAT = /^[a-zа-я]{1,50}([ \-][a-zа-я]{1,50})?([ \-][\d]{1,5})?$/i
 
-  def initialize(start, finish)
-    @stations = [start, finish]
+  @@stations = []
+  
+  def self.all
+    @@stations
+  end
+
+  def initialize(name)
+    @name = name
+    @trains = []
     validate!
-  end
-
-  def add_station(station)
-    raise "В маршрут уже входит станция '#{station.name}'." if stations.include?(station)
-    raise StandardError, "Станция должна быть объектом типа Station." unless station.is_a?(Station)
-    @stations.insert(-2, station)
+    @@stations << self
   end
   
-  def delete_station
-    raise "Отсутствуют промежуточные станции в маршруте." unless self.stations.length > 2
-    @stations.delete_at(-2) 
+  def get_train(train)
+    raise StandardError "Можно разместить только поезд" unless train.is_a?(Train)
+    @trains[train.number.to_i] = train
   end
   
-  def show_stations
-     @stations.each { |station| puts station }
+  def delete_train(number)
+    raise StandardError "Не найден поезд с номером №#{number}" if self.trains[number].nil?
+    self.trains.delete(number)
   end
+  
+  def types(type)
+    @trains.select {|train| train.type == type}
+  end  
 
-  protected
-
+  protected 
+  
   def validate!
-    raise "Начальная и конечная станции не должны совпадать." if self.stations[0] == self.stations[-1]
-    self.stations.each do |station|
-      raise StandardError "Станция должна быть объектом типа Station." unless station.is_a?(Station)
-    end
+    raise "Станция не может быть пустой." if self.name.nil?
+    raise StandardError, "Некорректное имя (#{self.name})" if self.name !~ NAME_FORMAT
   end
 
   def valid?
@@ -39,5 +45,5 @@ class Route
   rescue
     false
   end
-
-end
+  
+end 
