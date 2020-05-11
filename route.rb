@@ -11,7 +11,7 @@ class Route
 
   def add_station(station)
     raise "В маршрут уже входит станция '#{station.name}'." if stations.include?(station)
-    raise StandardError, "Станция должна быть объектом типа Station." unless station.is_a?(Station)
+    raise "Станция должна быть объектом типа Station." unless station.is_a?(Station)
 
     @stations.insert(-2, station)
   end
@@ -31,7 +31,7 @@ class Route
   def validate!
     raise "Начальная и конечная станции не должны совпадать." if self.stations[0] == self.stations[-1]
     self.stations.each do |station|
-      raise StandardError "Станция должна быть объектом типа Station." unless station.is_a?(Station)
+      raise "Станция должна быть объектом типа Station." unless station.is_a?(Station)
     end
   end
 
