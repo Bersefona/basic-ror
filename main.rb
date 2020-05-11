@@ -1,21 +1,3 @@
-###
-#
-#  Создать программу, которая будет позволять пользователю через текстовый интерфейс делать следующее:
-# - (+) Создавать станции
-# - (+) Создавать поезда
-# - (+) Создавать маршруты
-# - (+) Управлять станциями в нем (добавлять)
-# - (+) Управлять станциями в нем (удалять)
-# - (+) Назначать маршрут поезду
-# - (+) Добавлять вагоны к поезду
-# - (+) Отцеплять вагоны от поезда
-# - (+) Перемещать поезд по маршруту вперед
-# - (+) Перемещать поезд по маршруту назад
-# - (+) Просматривать список станций
-# - (+) Просматривать список поездов на станции
-#
-###
-
 require_relative 'cargo_train.rb'
 require_relative 'cargo_van.rb'
 require_relative 'passenger_train.rb'
@@ -57,9 +39,7 @@ class Menu
       else
         return 'Некорректный выбор. Повторите ввод.'
       end
-        
     end
-        
   end
       
    
@@ -83,9 +63,10 @@ class Menu
   def create_station
     station_name = get_station_name
     @stations << Station.new(station_name) unless station_name.empty?
+    puts "Создана станция '#{station_name}'."
   end
 
-   def create_train
+  def create_train
     puts 'Введите 1 для создания пассажирского поезда и 2 - для грузового.'
     choice = gets.chomp.to_i
       case choice
@@ -97,17 +78,29 @@ class Menu
     end
 
   def create_passenger_train
-    number = get_train_number
-    return if number.empty?
-    train = PassengerTrain.new(number)
-    self.trains << train
+    begin
+      number = get_train_number
+      return if number.empty?
+      train = PassengerTrain.new(number)
+      self.trains << train
+      puts "Создан поезд '№#{number}' пассажирского типа."
+    rescue RuntimeError => e
+      puts "#{e.message}"
+      retry
+    end
   end
 
   def create_cargo_train
-    number = get_train_number
-    return if number.empty?
-    train = CargoTrain.new(number)
-    self.trains << train
+    begin
+      number = get_train_number
+      return if number.empty?
+      train = CargoTrain.new(number)
+      self.trains << train
+      puts "Создан поезд '№#{number}' грузового типа."
+    rescue RuntimeError => e
+      puts "#{e.message}"
+      retry
+    end
   end
 
   def create_route
@@ -121,6 +114,7 @@ class Menu
     return if finish_index.nil? || self.stations[finish_index].nil?
 
     @routes << Route.new(self.stations[start_index], self.stations[finish_index])
+    puts "Создан маршрут из '#{self.stations[start_index].name} в #{self.stations[finish_index].name}'."
   end
 
   def add_station_to_route
@@ -135,6 +129,7 @@ class Menu
     return if route_index.nil? || self.routes[route_index].nil?
 
     self.routes[route_index].add_station(stations[station_index])
+    puts "В маршрут добавлена станция '#{stations[station_index].name}'."
   end
 
   def delete_station_from_route
@@ -145,6 +140,7 @@ class Menu
     return if route_index.nil? || self.routes[route_index].nil?
 
     self.routes[route_index].delete_station
+    puts "Из маршрута удалена станция '#{station_name}'."
   end
 
   def add_route_to_train
@@ -158,7 +154,8 @@ class Menu
     train_index = get_train_index
     return if train_index.nil? || self.trains[train_index].nil?
     
-    self.trains[train_index].route=(self.routes[route_index])    
+    self.trains[train_index].route=(self.routes[route_index]) 
+    puts "Маршрут добавлен к поезду №#{self.trains[train_index].number}"
   end
 
   def add_van
@@ -176,6 +173,7 @@ class Menu
     end
 
     self.trains[train_index].add_van(van)
+    puts "Вагон прицеплен к поезду №#{self.trains[train_index].number}."
   end
 
   def delete_van_from_train
@@ -187,6 +185,7 @@ class Menu
     return if train_index.nil? || self.trains[train_index].nil?
     
     self.trains[train_index].delete_van
+    puts "Вагон отцеплен от поезда №#{self.trains[train_index].number}."
   end
 
   def move_train_forward
@@ -194,12 +193,15 @@ class Menu
 
     self.show_all_trains
     train_index = get_train_index
-   
-    return if train_index.nil? || self.trains[train_index].nil?
 
-    return if self.trains[train_index].route.nil?
-
-    self.trains[train_index].move_on
+    if self.trains[train_index].route.nil?
+      puts "У поезда №#{self.trains[train_index].number} нет назначенного маршрута."
+    else
+      self.trains[train_index].move_on
+      puts "Поезд №#{self.trains[train_index].number} прибыл на станцию '#{self.trains[train_index].current_station.name}'."
+    end
+    
+    puts '-----'
   end
 
   def move_train_backward
@@ -207,19 +209,22 @@ class Menu
 
     self.show_all_trains
     train_index = get_train_index
+
+    if self.trains[train_index].route.nil?
+      puts "У поезда №#{self.trains[train_index].number} нет назначенного маршрута."
+    else
+      self.trains[train_index].move_on
+      puts "Поезд №#{self.trains[train_index].number} прибыл на станцию '#{self.trains[train_index].current_station.name}'."
+    end
     
-    return if train_index.nil? || self.trains[train_index].nil?
-
-    return if self.trains[train_index].route.nil?
-
-    self.trains[train_index].move_back
+    puts '-----'
   end
+
 
   def show_stations
     self.stations.each_with_index { |station, index| puts "[#{index}] #{station.name}" }
-    puts '---'
+    puts '-----'
   end
-
 
   def show_trains_on_station
     return if self.trains.empty? || self.stations.empty?
@@ -233,7 +238,7 @@ class Menu
     self.stations[station_index].trains.each { |train| trains << train }
     show_trains(trains)
 
-    puts '---'
+    puts '-----'
   end
       
   def show_routes
@@ -242,16 +247,14 @@ class Menu
       route.stations.each { |station| stations << station.name }
       puts "[#{index}] #{stations.join(" -> ")}"
     end
-    puts '---'
+    puts '-----'
   end
    
   def show_all_trains
     show_trains(self.trains)
-    puts '---'
+    puts '-----'
   end
-      
-  
-
+    
   private
 
   def get_start_index
@@ -291,7 +294,7 @@ class Menu
 
   def get_integer
     input = gets.chomp.lstrip.rstrip
-    return input.empty? ? nil : input.to_i
+    return (input.empty? || /\D/.match(input)) ? input : input.to_i
   end
 
   def show_trains(trains)

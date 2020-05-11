@@ -1,6 +1,3 @@
-###
-# Подключить модуль InstanceCounter в класс маршрута.
-###
 require_relative 'instance_counter.rb'
 
 class Route
@@ -9,6 +6,7 @@ class Route
 
   def initialize(start, finish)
     @stations = [start, finish]
+    validate!
   end
 
   def add_station(station)
@@ -21,6 +19,19 @@ class Route
   
   def show_stations
      @stations.each { |station| puts station }
+  end
+
+  protected
+
+  def validate!
+    raise "Начальная и конечная станции не должны совпадать." if self.stations[0] == self.stations[-1]
+  end
+
+  def valid?
+    validate!
+    true
+  rescue
+    false
   end
 
 end
