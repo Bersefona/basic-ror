@@ -86,7 +86,7 @@ class Menu
       return if number.empty?
       train = PassengerTrain.new(number)
       self.trains << train
-      "Создан поезд '№#{number}' пассажирского типа."
+      puts "Создан поезд '№#{number}' пассажирского типа."
     rescue RuntimeError => e
       puts "#{e.message}"
       retry
@@ -99,7 +99,7 @@ class Menu
       return if number.empty?
       train = CargoTrain.new(number)
       self.trains << train
-      "Создан поезд '№#{number}' грузового типа."
+      puts "Создан поезд '№#{number}' грузового типа."
     rescue RuntimeError => e
       puts "#{e.message}"
       retry
@@ -250,12 +250,12 @@ class Menu
       route.stations.each { |station| stations << station.name }
       puts "[#{index}] #{stations.join(" -> ")}"
     end
-    puts '---'
+    puts '-----'
   end
    
   def show_all_trains
     show_trains(self.trains)
-    puts '---'
+    puts '-----'
   end
       
   protected
