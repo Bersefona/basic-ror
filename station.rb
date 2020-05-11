@@ -19,12 +19,12 @@ class Station
   end
   
   def get_train(train)
-    raise StandardError "Можно разместить только поезд" unless train.is_a?(Train)
+    raise "Можно разместить только поезд" unless train.is_a?(Train)
     @trains[train.number.to_i] = train
   end
   
   def delete_train(number)
-    raise StandardError "Не найден поезд с номером №#{number}" if self.trains[number].nil?
+    raise "Не найден поезд с номером №#{number}" if self.trains[number].nil?
     self.trains.delete(number)
   end
   
@@ -36,7 +36,7 @@ class Station
   
   def validate!
     raise "Станция не может быть пустой." if self.name.nil?
-    raise StandardError, "Некорректное имя (#{self.name})" if self.name !~ NAME_FORMAT
+    raise "Некорректное имя (#{self.name})" if self.name !~ NAME_FORMAT
   end
 
   def valid?
