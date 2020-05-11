@@ -51,7 +51,7 @@ class Train
   end
   
   def route=(route)
-    raise "В качестве маршрута можно назначить только маршрут" unless route.is_a?(Route)
+    raise "В качестве маршрута можно назначить только маршрут." unless route.is_a?(Route)
     @route = route
     @current_station_index = 0
     current_station.get_train(self)
