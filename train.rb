@@ -1,16 +1,21 @@
 ###
-#
-#   Разделить поезда на два типа PassengerTrain и CargoTrain
-#   Сделать родителя для классов, который будет содержать общие методы и свойства
-#   Разделить вагоны на класс "грузовые" и класс "пассажирские"
-#   К пассажирскому поезду можно прицепить только пассажирские, к грузовому - грузовые.
-#
+# Подключить модуль к классу Поезд
+# Добавить к поезду атрибут Номер (произвольная строка), если его еще нет, который указыватеся при его создании
+# В классе Train создать метод класса find, который принимает номер поезда (указанный при его создании)
+# и возвращает объект поезда по номеру или nil, если поезд с таким номером не найден.
+# Подключить модуль InstanceCounter в класс поезда.
 ###
 
+require_relative 'manufacturer.rb'
+require_relative 'instance_counter.rb'
+
 class Train
-
+  include Manufacturer
+  include InstanceCounter
   attr_reader :speed, :route, :number, :current_station_index, :type
-
+  
+  @@trains = {}
+  
   def initialize(number, type)
     @number = number
     @type = type
@@ -18,6 +23,11 @@ class Train
     @vans = []
     @route = nil
     @current_station_index = nil
+    @@trains[number] = self
+  end
+  
+  def self.find(train_number)
+    @@trains[train_number]
   end
 
   def faster(value)
@@ -68,9 +78,6 @@ class Train
     move(self.current_station_index - 1) if prev_station
   end
   
-  # добавлен для того, чтобы:
-  # показать, что методы будут использоваться в подклассах;
-  # скрыть доступ "из вне" класса.
   protected
   
   def move(value)
