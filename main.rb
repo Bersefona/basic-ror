@@ -67,15 +67,18 @@ class Menu
   end
 
   def create_train
-    puts 'Введите 1 для создания пассажирского поезда и 2 - для грузового.'
-    choice = gets.chomp.to_i
-      case choice
-      when 1 then create_passenger_train
-      when 2 then create_cargo_train
-      else
-        return 'Некорректный выбор. Повторите ввод.'
+    begin
+      print "Введите тип поезда (passenger/cargo): "
+      type = gets.chomp.to_s
+      case type
+        when 'passenger' then create_passenger_train
+        when 'cargo' then create_cargo_train
       end
+    rescue RuntimeError => e
+      puts "#{e.message}"
+      retry
     end
+  end
 
   def create_passenger_train
     begin
