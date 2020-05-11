@@ -62,23 +62,20 @@ class Menu
 
   def create_station
     station_name = get_station_name
-    @stations << Station.new(station_name)
+    @stations << Station.new(station_name) unless station_name.empty?
     puts "Создана станция '#{station_name}'."
   end
 
   def create_train
-    begin
-      puts "Введите тип passenger или cargo."
-      type = gets.chomp.to_s
-      case type
-        when 'passenger' then create_passenger_train
-        when 'cargo' then create_cargo_train
+    puts 'Введите 1 для создания пассажирского поезда и 2 - для грузового.'
+    choice = gets.chomp.to_i
+      case choice
+      when 1 then create_passenger_train
+      when 2 then create_cargo_train
+      else
+        return 'Некорректный выбор. Повторите ввод.'
       end
-    rescue RuntimeError => e
-      puts "#{e.message}"
-      retry
     end
-  end
 
   def create_passenger_train
     begin
@@ -111,11 +108,11 @@ class Menu
     
     self.show_stations
     start_index = get_start_index
-    validate!(start_index, self.stations)
-
     finish_index = get_finish_index
-    validate!(finish_index, self.stations)
     
+    return if start_index.nil? || self.stations[start_index].nil?
+    return if finish_index.nil? || self.stations[finish_index].nil?
+
     @routes << Route.new(self.stations[start_index], self.stations[finish_index])
     puts "Создан маршрут из '#{self.stations[start_index].name} в #{self.stations[finish_index].name}'."
   end
@@ -125,11 +122,11 @@ class Menu
 
     self.show_stations
     station_index = get_station_index
-    validate!(station_index, self.stations)
+    return if station_index.nil? || self.stations[station_index].nil?
 
     self.show_routes
     route_index = get_route_index
-    validate!(route_index, self.routes)
+    return if route_index.nil? || self.routes[route_index].nil?
 
     self.routes[route_index].add_station(stations[station_index])
     puts "В маршрут добавлена станция '#{stations[station_index].name}'."
@@ -140,9 +137,8 @@ class Menu
 
     self.show_routes
     route_index = get_route_index
-    validate!(route_index, self.routes)
+    return if route_index.nil? || self.routes[route_index].nil?
 
-    station_name = self.routes[route_index].stations[-2].name
     self.routes[route_index].delete_station
     puts "Из маршрута удалена станция '#{station_name}'."
   end
@@ -152,13 +148,13 @@ class Menu
 
     self.show_routes
     route_index = get_route_index
-    validate!(route_index, self.routes)
+    return if route_index.nil? || self.routes[route_index].nil?
 
     self.show_all_trains
     train_index = get_train_index
-    validate!(train_index, self.trains)
+    return if train_index.nil? || self.trains[train_index].nil?
     
-    self.trains[train_index].route=(self.routes[route_index])
+    self.trains[train_index].route=(self.routes[route_index]) 
     puts "Маршрут добавлен к поезду №#{self.trains[train_index].number}"
   end
 
@@ -167,7 +163,8 @@ class Menu
 
     self.show_all_trains
     train_index = get_train_index
-    validate!(train_index, self.trains)
+
+    return if self.trains[train_index].nil?
 
     case self.trains[train_index].class.to_s
       when 'CargoTrain' then van = CargoVan.new
@@ -184,7 +181,8 @@ class Menu
     
     self.show_all_trains
     train_index = get_train_index
-    validate!(train_index, self.trains)
+  
+    return if train_index.nil? || self.trains[train_index].nil?
     
     self.trains[train_index].delete_van
     puts "Вагон отцеплен от поезда №#{self.trains[train_index].number}."
@@ -195,7 +193,6 @@ class Menu
 
     self.show_all_trains
     train_index = get_train_index
-    validate!(train_index, self.trains)
 
     if self.trains[train_index].route.nil?
       puts "У поезда №#{self.trains[train_index].number} нет назначенного маршрута."
@@ -212,7 +209,6 @@ class Menu
 
     self.show_all_trains
     train_index = get_train_index
-    validate!(train_index, self.trains)
 
     if self.trains[train_index].route.nil?
       puts "У поезда №#{self.trains[train_index].number} нет назначенного маршрута."
@@ -235,7 +231,8 @@ class Menu
 
     self.show_stations
     station_index = get_station_index
-    validate!(station_index, self.stations)
+    
+    return if station_index.nil? || self.stations[station_index].nil?
 
     trains = [] 
     self.stations[station_index].trains.each { |train| trains << train }
@@ -257,14 +254,7 @@ class Menu
     show_trains(self.trains)
     puts '-----'
   end
-      
-  protected
-      
-  def validate!(index, object)
-    raise "Индекс [#{index}] не найден." if !index.is_a?(Integer) || object[index].nil?
-  end
-  
-
+    
   private
 
   def get_start_index
