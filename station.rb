@@ -4,6 +4,7 @@ class Station
   include InstanceCounter
   attr_reader :name, :trains
   NAME_FORMAT = /^[a-zа-я]{1,50}([ \-][a-zа-я]{1,50})?([ \-][\d]{1,5})?$/i
+  
   @@stations = []
   
   def self.all
