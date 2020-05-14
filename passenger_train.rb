@@ -2,8 +2,8 @@ require_relative 'train.rb'
 
 class PassengerTrain < Train
   
-  def initialize(number)#, type = 'passenger')
-    super(number)
+  def initialize(number, type = 'passenger')
+    super
   end
  
   def add_van(van)
@@ -11,4 +11,3 @@ class PassengerTrain < Train
   end
 
 end
-

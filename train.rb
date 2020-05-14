@@ -5,26 +5,22 @@ class Train
 
   include Manufacturer
   include InstanceCounter
-  attr_reader :speed, :route, :number, :current_station_index, :vans #, :type
+  attr_reader :speed, :route, :number, :current_station_index, :type
   NUMBER_FORMAT = /^([a-zа-я]|\d){3}-?([a-zа-я]|\d){2}$/i
-  #TYPE_FORMAT = /^cargo$|^passenger$/i
+  TYPE_FORMAT = /^cargo$|^passenger$/i
   
   @@trains = {}
    
 
-  def initialize(number)#, type)
+  def initialize(number, type)
     @number = number
-    #@type = type
+    @type = type
     @speed = 0
     @vans = []
     @route = nil
     @current_station_index = nil
     validate!
     @@trains[number] = self
-  end
-
-  def each_van(&block)
-    self.vans.each { |van| yield(van) } if block_given?
   end
 
   def self.find(train_number)
@@ -44,23 +40,21 @@ class Train
   end
   
   def add_van(van)
-    @vans << van if @speed == 0
+    raise "Невозможно прицепить вагон, покуда поезд движется." if self.speed > 0
+    @vans << van
   end
   
   def delete_van
-    @vans.pop if @speed == 0 && @vans.length > 0
+    raise "Невозможно отцепить вагон, покуда поезд движется." if self.speed > 0
+    raise "Невозможно отцепить вагон, которого нет." if @vans.length < 0
+    @vans.pop
   end
   
   def route=(route)
-    if route.is_a?(Route)
-      @route = route
-      @current_station_index = 0
-      current_station.get_train(self)
-    end  
-  end
-
-  def to_s
-    "Поезд '№#{number}' | Тип '#{self.class}' | Вагонов '#{@vans.length}'"
+    raise "В качестве маршрута можно назначить только маршрут." unless route.is_a?(Route)
+    @route = route
+    @current_station_index = 0
+    current_station.get_train(self)
   end
 
   def prev_station
@@ -76,11 +70,13 @@ class Train
   end
 
   def move_on
-    move(self.current_station_index + 1) if next_station 
+    raise "Поезд прибыл на конечную станцию." unless next_station
+    move(self.current_station_index + 1)
   end
   
   def move_back
-    move(self.current_station_index - 1) if prev_station
+    raise "Поезд прибыл на начальную станцию." unless prev_station
+    move(self.current_station_index - 1)
   end
   
   
@@ -98,7 +94,7 @@ class Train
 
   def validate!
     raise "Неправильный формат номера поезда." if self.number !~ NUMBER_FORMAT
-    #raise "Неправильный формат типа поезда." if self.type !~ TYPE_FORMAT
+    raise "Неправильный формат типа поезда." if self.type !~ TYPE_FORMAT
   end
 
   def valid?
@@ -109,4 +105,3 @@ class Train
   end 
 
 end  
-
