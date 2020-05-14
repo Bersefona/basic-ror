@@ -5,22 +5,26 @@ class Train
 
   include Manufacturer
   include InstanceCounter
-  attr_reader :speed, :route, :number, :current_station_index, :type
+  attr_reader :speed, :route, :number, :current_station_index, :vans #, :type
   NUMBER_FORMAT = /^([a-zа-я]|\d){3}-?([a-zа-я]|\d){2}$/i
-  TYPE_FORMAT = /^cargo$|^passenger$/i
+  #TYPE_FORMAT = /^cargo$|^passenger$/i
   
   @@trains = {}
    
 
-  def initialize(number, type)
+  def initialize(number)#, type)
     @number = number
-    @type = type
+    #@type = type
     @speed = 0
     @vans = []
     @route = nil
     @current_station_index = nil
     validate!
     @@trains[number] = self
+  end
+
+  def each_van(&block)
+    self.vans.each { |van| yield(van) } if block_given?
   end
 
   def self.find(train_number)
@@ -53,6 +57,10 @@ class Train
       @current_station_index = 0
       current_station.get_train(self)
     end  
+  end
+
+  def to_s
+    "Поезд '№#{number}' | Тип '#{self.class}' | Вагонов '#{@vans.length}'"
   end
 
   def prev_station
@@ -90,7 +98,7 @@ class Train
 
   def validate!
     raise "Неправильный формат номера поезда." if self.number !~ NUMBER_FORMAT
-    raise "Неправильный формат типа поезда." if self.type !~ TYPE_FORMAT
+    #raise "Неправильный формат типа поезда." if self.type !~ TYPE_FORMAT
   end
 
   def valid?
@@ -101,3 +109,4 @@ class Train
   end 
 
 end  
+
