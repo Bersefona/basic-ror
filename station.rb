@@ -17,6 +17,10 @@ class Station
     validate!
     @@stations << self
   end
+
+  def each_train(&block)
+    self.trains.each { |train| yield(train) } if block_given?
+  end
   
   def get_train(train)
     @trains[train.number.to_i] = train if train.is_a?(Train)
