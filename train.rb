@@ -6,6 +6,7 @@ class Train
   include Manufacturer
   include InstanceCounter
   attr_reader :speed, :route, :number, :current_station_index, :vans #, :type
+  
   NUMBER_FORMAT = /^([a-zа-я]|\d){3}-?([a-zа-я]|\d){2}$/i
   #TYPE_FORMAT = /^cargo$|^passenger$/i
   
@@ -23,7 +24,7 @@ class Train
     @@trains[number] = self
   end
 
-  def each_van(&block)
+  def each_van
     self.vans.each { |van| yield(van) } if block_given?
   end
 
@@ -109,3 +110,4 @@ class Train
   end 
 
 end  
+

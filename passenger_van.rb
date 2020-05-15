@@ -1,18 +1,20 @@
 require_relative 'van.rb'
 
 class PassengerVan < Van
-  
+ 
+=begin  
   attr_reader :seats_on_train
   
-  def initialize(seats_on_train)#, type='passenger')
+  def initialize#(seats_on_train)
     @number = generate_number
     @seats_on_train = seats_on_train
     validate!
-    self.seats = []
+    @busy_seats_on_train = 0
   end
+
   
   def take_up_seat
-    self.seats << 1 if self.busy_seats_on_train <= self.seats_on_train
+    @busy_seats_on_train += 1 if self.busy_seats_on_train <= self.seats_on_train
   end
 
   def free_up_seat
@@ -37,7 +39,7 @@ class PassengerVan < Van
   attr_accessor :seats
 
   def validate!
-    raise "Число мест не может быть отрицательным." if self.seats_on_train <= 0
+    raise "Число мест не может быть отрицательным числом." if self.seats_on_train <= 0
   end
 
   def valid?
@@ -46,5 +48,5 @@ class PassengerVan < Van
   rescue
     false
   end
-  
+=end  
 end

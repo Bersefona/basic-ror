@@ -1,24 +1,25 @@
 require_relative 'van.rb'
 
 class CargoVan < Van
-
+=begin 
   attr_reader :total_volume
   
-  def initialize(total_volume)
+  def initialize#(total_volume)
     @number = generate_number
     @total_volume = total_volume
     validate!
-    @volume = 0
+    @occupied_volume = 0
   end
 
+ 
   def increase_volume(volume)
-    return if self.volume + volume > self.total_volume
-    self.volume += volume
+    return if free_volume < volume
+    @occupied_volume += volume
   end
 
   def decrease_volume(volume)
-    return if self.volume - volume < 0
-    self.volume -= volume
+    return if occupied_volume < volume
+    @occupied_volume -= volume
   end
    
   def free_volume
@@ -47,5 +48,5 @@ class CargoVan < Van
   rescue
     false
   end
-
+=end
 end

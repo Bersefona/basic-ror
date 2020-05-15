@@ -93,6 +93,7 @@ class Menu
     station_name = get_station_name
     @stations << Station.new(station_name) unless station_name.empty?
     puts "Создана станция '#{station_name}'."
+    separator
   end
 
   def create_train
@@ -108,6 +109,7 @@ class Menu
       puts "#{e.message}"
       retry
     end
+    separator
   end
 
 def create_route
@@ -115,7 +117,8 @@ def create_route
     start = get_station { puts 'Начальная станция: ' }
     finish = get_station { puts 'Конечная станция: ' }
     routes << Route.new(start, finish)
-    puts "Создан маршрут '#{start.name} -> #{finish}'."
+    puts "Создан маршрут '#{start.name} -> #{finish.name}'."
+    separator
   end
 
   def add_station_to_route
@@ -123,7 +126,8 @@ def create_route
     station = get_station
     route = get_route
     route.add_station(station)
-    "В маршрут добавлена станция '#{station.name}'."
+    puts "В маршрут добавлена станция '#{station.name}'."
+    separator
   end
 
   def delete_station_from_route
@@ -135,6 +139,7 @@ def create_route
 
     self.routes[route_index].delete_station
     puts "Из маршрута удалена станция '#{station_name}'."
+    separator
   end
 
   def add_route_to_train
@@ -142,7 +147,8 @@ def create_route
 
     train = get_train
     train.route = get_route
-    "Маршрут добавлен к поезду №#{train.number}."
+    puts "Маршрут добавлен к поезду №#{train.number}."
+    separator
   end
 
   def add_van_to_train
@@ -155,7 +161,8 @@ def create_route
     when 'PassengerTrain' then train.add_van(create_passenger_van)
     end
 
-    "Вагон добавлен к поезду №#{train.number}"
+    puts "Вагон добавлен к поезду №#{train.number}"
+    separator
   end
 
   def use_van
@@ -166,10 +173,11 @@ def create_route
 
     case train.class.to_s
     when 'CargoTrain' then use_cargo_van(van)
-    when 'PassengerTrain' then van.take_up_seat
+    when 'PassengerTrain' then van.take_up(1)
     end
 
-    "Пространство в вагоне №#{van.number} поезда №#{train.number} было успешно занято."
+    puts "Пространство в вагоне №#{van.number} поезда №#{train.number} было занято."
+    separator
   end
 
   def free_van
@@ -180,12 +188,12 @@ def create_route
 
     case train.class.to_s
     when 'CargoTrain' then free_cargo_van(van)
-    when 'PassengerTrain' then van.free_up_seat
+    when 'PassengerTrain' then van.free_up(1)
     end
 
-    "Пространство в вагоне №#{van.number} поезда №#{train.number} освобождено."
+    puts "Пространство в вагоне №#{van.number} поезда №#{train.number} освобождено."
+    separator
   end
-
 
   def delete_van_from_train
     return if trains.empty?
@@ -193,7 +201,8 @@ def create_route
     train = get_train
 
     train.delete_van
-    "Вагон отцеплен от поезда №#{train.number}."
+    puts "Вагон отцеплен от поезда №#{train.number}."
+    separator
   end
 
   def move_train_forward
@@ -209,7 +218,7 @@ def create_route
       puts "Поезд №#{self.trains[train_index].number} прибыл на станцию '#{self.trains[train_index].current_station.name}'."
     end
     
-    puts '-----'
+    separator
   end
 
   def move_train_backward
@@ -225,12 +234,12 @@ def create_route
       puts "Поезд №#{self.trains[train_index].number} прибыл на станцию '#{self.trains[train_index].current_station.name}'."
     end
     
-    puts '-----'
+    separator
   end
 
   def show_stations
     self.stations.each_with_index { |station, index| puts "[#{index}] #{station.name}" }
-    puts '-----'
+    separator
   end
 
 
@@ -253,8 +262,8 @@ def create_route
  def show_trains_on_station(station)
     puts "Станция: #{station.name} (поездов: #{station.trains.length})"
     station.each_train do |train|
-      puts train.to_s
-      train.each_van { |van| puts van.to_s }
+      puts train
+      train.each_van { |van| puts van }
       puts
     end
   end
@@ -265,13 +274,17 @@ def create_route
       route.stations.each { |station| stations << station.name }
       puts "[#{index}] #{stations.join(" -> ")}"
     end
-    puts '-----'
+    separator
   end
    
   def show_all_trains
     show_trains(self.trains)
   end
     
+  def separator
+    puts '--------'
+  end  
+
   private
 
   def get_van(train)
@@ -366,16 +379,16 @@ def create_route
 
   def free_cargo_van(van)
     volume = get_volume
-    van.decrease_volume(volume)
+    van.free_up(volume)
   end
 
   def use_cargo_van(van)
     volume = get_volume
-    van.increase_volume(volume)
+    van.take_up(volume)
   end
 
   def use_passenger_van(van)
-    van.take_up_seat
+    van.take_up(1)
   end
 
   def create_cargo_van

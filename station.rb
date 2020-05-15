@@ -3,6 +3,7 @@ require_relative 'instance_counter.rb'
 class Station 
   include InstanceCounter
   attr_reader :name, :trains
+  
   NAME_FORMAT = /^[a-zа-я]{1,50}([ \-][a-zа-я]{1,50})?([ \-][\d]{1,5})?$/i
   
   @@stations = []
@@ -18,7 +19,7 @@ class Station
     @@stations << self
   end
 
-  def each_train(&block)
+  def each_train
     self.trains.each { |train| yield(train) } if block_given?
   end
   
