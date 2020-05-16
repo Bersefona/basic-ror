@@ -62,8 +62,8 @@ class Menu
     puts '10. Переместить поезд назад.'
     puts '11. Просмотреть список поездов на станции.'
     puts '12. Просмотреть список станций.'
-    puts '13. Занять вагон.'
-    puts '14. Освободить вагон.'
+    puts '13. Занять пространство вагона.'
+    puts '14. Освободить пространство вагона.'
     puts '15. Показать поезда на одной станции.'
     puts '16. Показать поезда на каждой станции.'
     #puts '17. Тест.'
@@ -188,7 +188,7 @@ def create_route
 
     case train.class.to_s
     when 'CargoTrain' then free_cargo_van(van)
-    when 'PassengerTrain' then van.free_up(1)
+    when 'PassengerTrain' then van.free_up
     end
 
     puts "Пространство в вагоне №#{van.number} поезда №#{train.number} освобождено."
@@ -388,7 +388,7 @@ def create_route
   end
 
   def use_passenger_van(van)
-    van.take_up(1)
+    van.take_up
   end
 
   def create_cargo_van
