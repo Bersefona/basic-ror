@@ -1,11 +1,16 @@
 require_relative 'manufacturer.rb'
 require_relative 'instance_counter.rb'
+require_relative 'validation.rb'
+require_relative 'accessors.rb'
 
 class Train
 
   include Manufacturer
   include InstanceCounter
-  attr_reader :speed, :route, :number, :current_station_index, :vans #, :type
+  include Validation
+  include Accessors
+
+  attr_accessor_with_history :number, :type, :speed, :route, :vans, :current_station_index
   
   NUMBER_FORMAT = /^([a-zа-я]|\d){3}-?([a-zа-я]|\d){2}$/i
   #TYPE_FORMAT = /^cargo$|^passenger$/i
@@ -13,9 +18,9 @@ class Train
   @@trains = {}
    
 
-  def initialize(number)#, type)
+  def initialize(number, type)
     @number = number
-    #@type = type
+    @type = type
     @speed = 0
     @vans = []
     @route = nil
@@ -101,13 +106,6 @@ class Train
     raise "Неправильный формат номера поезда." if self.number !~ NUMBER_FORMAT
     #raise "Неправильный формат типа поезда." if self.type !~ TYPE_FORMAT
   end
-
-  def valid?
-    validate!
-    true
-  rescue
-    false
-  end 
 
 end  
 

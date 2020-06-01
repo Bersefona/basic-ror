@@ -1,8 +1,9 @@
-# Подключить модуль к классу Вагон
 require_relative 'manufacturer.rb'
+require_relative 'validation.rb'
 
 class Van
   include Manufacturer
+  include Validation
   attr_reader :number, :total_value
 
   def initialize(total_value)
@@ -42,13 +43,6 @@ class Van
 
   def validate!
     raise "Число не может быть отрицательным." if self.total_value <= 0
-  end
-
-  def valid?
-    validate!
-    true
-  rescue
-    false
   end
 
   def generate_number
